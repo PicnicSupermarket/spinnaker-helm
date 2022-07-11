@@ -7,10 +7,14 @@ NEXUS_PASSWORD="${NEXUS_PASSWORD:?NEXUS_PASSWORD not specified or empty}"
 CHARTS_DIR="${1:-charts}"
 
 CHART_DIR="${CHARTS_DIR}/spinnaker"
-TMP_DIR="$(mktemp -d)"
 
+# Ensure all dependent charts are pulled.
+helm3 dependency build "${CHART_DIR}"
+
+# Package the chart.
+TMP_DIR="$(mktemp -d)"
 trap 'rm -rf -- "${TMP_DIR}"' INT TERM HUP EXIT
-helm3 package --dependency-update "${CHART_DIR}" --destination "${TMP_DIR}"
+helm3 package "${CHART_DIR}" --destination "${TMP_DIR}"
 find "${TMP_DIR}" -name '*.tgz' -exec \
     curl --fail-with-body \
     -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
