@@ -1,0 +1,5 @@
+# Helm will include dependent charts upon packaging.
+charts/**/*.tgz
+
+# IDE files.
+.idea
