@@ -17,10 +17,11 @@ trap 'rm -rf -- "${TMP_DIR}"' INT TERM HUP EXIT
 helm3 package "${CHART_DIR}" --destination "${TMP_DIR}"
 find "${TMP_DIR}" -name '*.tgz' -exec sh -c \
       'test \
-        $(curl -o /dev/stderr -w "%{http_code}" \
-        -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
-        https://nexus.global.picnicinternational.com/repository/helm/ \
-        --upload-file "${0}") \
-      -eq 200' {} +
+        $(curl -v -o /dev/stderr -w "%{http_code}" \
+          -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
+          https://nexus.global.picnicinternational.com/repository/helm/ \
+          --upload-file "${0}") \
+      -eq 200' {} + \
+      || { echo "Failed to publish"; exit 1; }
 
 echo "Published successfully"
