@@ -15,10 +15,12 @@ helm3 dependency build "${CHART_DIR}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf -- "${TMP_DIR}"' INT TERM HUP EXIT
 helm3 package "${CHART_DIR}" --destination "${TMP_DIR}"
-find "${TMP_DIR}" -name '*.tgz' -exec \
-    curl --fail-with-body \
-    -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
-    https://nexus.global.picnicinternational.com/repository/helm/ \
-    --upload-file {} +;
+find "${TMP_DIR}" -name '*.tgz' -exec sh -c \
+      'test \
+        $(curl -o /dev/stderr -w "%{http_code}" \
+        -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
+        https://nexus.global.picnicinternational.com/repository/helm/ \
+        --upload-file "${0}") \
+      -eq 200' {} +
 
 echo "Published successfully"
