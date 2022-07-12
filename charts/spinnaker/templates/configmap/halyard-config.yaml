@@ -90,9 +90,7 @@ data:
     {{ end }}
 
     # Docker Registry
-    {{ $skipValidation := false }}
-    {{ range $index, $registry := .Values.dockerRegistries }}{{ if $registry.noValidate }}{{ $skipValidation = true }}{{ end }}{{ end }}
-    $HAL_COMMAND config provider docker-registry enable {{ if $skipValidation -}} --no-validate {{- end }}
+    $HAL_COMMAND config provider docker-registry enable {{ if (include "skipDockerRegistryEnablingValidation" .) -}} --no-validate {{- end }}
     {{- range $index, $registry := .Values.dockerRegistries }}
 
     if $HAL_COMMAND config provider docker-registry account get {{ $registry.name }} {{ if $registry.noValidate -}} --no-validate {{- end }}; then

@@ -81,3 +81,11 @@ Create name of kubeconfig file to use when setting up kubernetes provider
 {{- printf "/opt/kube/%s" .Values.kubeConfig.secretKey  | toString -}}
 {{- end }}
 {{- end }}
+
+{{/*
+Create global Docker registry configuration validation skip template to
+include iff there is at least one registry configured to skip this validation.
+*/}}
+{{- define "skipDockerRegistryEnablingValidation" -}}
+{{ range $index, $registry := .Values.dockerRegistries }}{{ if $registry.noValidate }}true{{ end }}{{ end }}
+{{- end }}
