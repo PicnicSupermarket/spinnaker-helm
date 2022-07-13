@@ -90,10 +90,10 @@ data:
     {{ end }}
 
     # Docker Registry
-    $HAL_COMMAND config provider docker-registry enable
+    $HAL_COMMAND config provider docker-registry enable {{ if (include "skipDockerRegistryEnablingValidation" .) -}} --no-validate {{- end }}
     {{- range $index, $registry := .Values.dockerRegistries }}
 
-    if $HAL_COMMAND config provider docker-registry account get {{ $registry.name }}; then
+    if $HAL_COMMAND config provider docker-registry account get {{ $registry.name }} {{- if $registry.noValidate }} --no-validate {{- end }}; then
       PROVIDER_COMMAND='edit'
     else
       PROVIDER_COMMAND='add'
