@@ -83,7 +83,7 @@ Create name of kubeconfig file to use when setting up kubernetes provider
 {{- end }}
 
 {{/*
-Create global template to skip Docker registry enabling validation iff there
+Create a template to skip global Docker registry enabling validation iff there
 is at least one registry configured to skip this validation.
 */}}
 {{- define "skipDockerRegistryEnablingValidation" -}}
