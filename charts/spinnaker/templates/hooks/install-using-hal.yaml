@@ -83,10 +83,14 @@ spec:
           secretName: {{ template "spinnaker.fullname" . }}-gcs
         {{- end }}
       {{- end }}
-      {{- if and .Values.s3.enabled .Values.s3.accessKey .Values.s3.secretKey }}
+      {{- if .Values.s3.enabled }}
       - name: s3-secrets
         secret:
+          {{- if .Values.s3.accountSecret }}
+          secretName: {{ .Values.s3.accountSecret }}
+          {{- else }}
           secretName: {{ template "spinnaker.fullname" .}}-s3
+          {{- end }}
       {{- end }}
       {{- if .Values.halyard.pullSecrets }}
       imagePullSecrets:
@@ -124,7 +128,7 @@ spec:
         - name: gcs-key
           mountPath: /opt/gcs
         {{- end }}
-        {{- if and .Values.s3.enabled .Values.s3.accessKey .Values.s3.secretKey }}
+        {{- if .Values.s3.enabled }}
         - name: s3-secrets
           mountPath: /opt/s3
         {{- end }}
