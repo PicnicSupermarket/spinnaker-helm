@@ -67,7 +67,7 @@ data:
       {{- if or .Values.s3.accessKey .Values.s3.accountSecret }}
       --access-key-id "$(cat /opt/s3/accessKey)" \
       {{- end }}
-      {{- if .Values.s3.secretKey }}
+      {{- if or .Values.s3.secretKey .Values.s3.accountSecret }}
       --secret-access-key \
       {{- end }}
       {{- range .Values.s3.extraArgs }}

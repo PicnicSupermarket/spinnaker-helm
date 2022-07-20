@@ -98,7 +98,7 @@ spec:
           {{- else }}
           secretName: {{ template "spinnaker.fullname" . }}-registry
           {{- end }}
-      {{- if .Values.s3.enabled }}
+      {{- if or .Values.s3.accountSecret (and .Values.s3.accessKey .Values.s3.secretKey) }}
       - name: s3-secrets
         secret:
           {{- if .Values.s3.accountSecret }}
@@ -175,7 +175,7 @@ spec:
         - name: gcs-key
           mountPath: /opt/gcs
         {{- end }}
-        {{- if .Values.s3.enabled }}
+        {{- if or .Values.s3.accountSecret (and .Values.s3.accessKey .Values.s3.secretKey) }}
         - name: s3-secrets
           mountPath: /opt/s3
         {{- end }}
