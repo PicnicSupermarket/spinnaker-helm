@@ -316,6 +316,8 @@ s3:
   # endpoint: ""
   # accessKey: ""
   # secretKey: ""
+  ## Use an existing kubernetes secret containing an `accessKey` and `secretKey`.
+  # accountSecret: ""
   # assumeRole: "<role to assume>"
   ## Here you can pass extra arguments to configure s3 storage options
   extraArgs: []

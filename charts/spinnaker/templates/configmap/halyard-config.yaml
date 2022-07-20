@@ -50,7 +50,7 @@ data:
     $HAL_COMMAND config storage edit --type s3
     {{ end }}
     {{ if .Values.s3.enabled }}
-    {{- if .Values.s3.secretKey -}} cat /opt/s3/secretKey | {{- end }} $HAL_COMMAND config storage s3 edit \
+    {{- if or .Values.s3.secretKey .Values.s3.accountSecret -}} cat /opt/s3/secretKey | {{- end }} $HAL_COMMAND config storage s3 edit \
       --bucket {{ .Values.s3.bucket }} \
       {{- if .Values.s3.rootFolder }}
       --root-folder {{ .Values.s3.rootFolder }} \
@@ -64,10 +64,10 @@ data:
       {{- if .Values.s3.assumeRole }}
       --assume-role {{ .Values.s3.assumeRole }} \
       {{- end }}
-      {{- if .Values.s3.accessKey }}
+      {{- if or .Values.s3.accessKey .Values.s3.accountSecret }}
       --access-key-id "$(cat /opt/s3/accessKey)" \
       {{- end }}
-      {{- if .Values.s3.secretKey }}
+      {{- if or .Values.s3.secretKey .Values.s3.accountSecret }}
       --secret-access-key \
       {{- end }}
       {{- range .Values.s3.extraArgs }}

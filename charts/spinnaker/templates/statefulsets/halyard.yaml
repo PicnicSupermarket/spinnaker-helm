@@ -98,10 +98,14 @@ spec:
           {{- else }}
           secretName: {{ template "spinnaker.fullname" . }}-registry
           {{- end }}
-      {{- if and .Values.s3.enabled .Values.s3.accessKey .Values.s3.secretKey }}
+      {{- if or .Values.s3.accountSecret (and .Values.s3.accessKey .Values.s3.secretKey) }}
       - name: s3-secrets
         secret:
+          {{- if .Values.s3.accountSecret }}
+          secretName: {{ .Values.s3.accountSecret }}
+          {{- else }}
           secretName: {{ template "spinnaker.fullname" . }}-s3
+          {{- end }}
       {{- end }}
       {{- if or .Values.halyard.additionalSecrets.create (hasKey .Values.halyard.additionalSecrets "name") }}
       - name: additional-secrets
@@ -171,7 +175,7 @@ spec:
         - name: gcs-key
           mountPath: /opt/gcs
         {{- end }}
-        {{- if and .Values.s3.enabled .Values.s3.accessKey .Values.s3.secretKey }}
+        {{- if or .Values.s3.accountSecret (and .Values.s3.accessKey .Values.s3.secretKey) }}
         - name: s3-secrets
           mountPath: /opt/s3
         {{- end }}
