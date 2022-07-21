@@ -14,7 +14,9 @@ Render settings for each service by merging predefined defaults with values pass
 {{- /* Defaults: redis service */}}
 {{- $redisDefaults := dict -}}
 {{- $_ := set $redisDefaults "skipLifeCycleManagement" true -}}
+{{- if not .Values.redis.auth.existingSecret }}
 {{- $_ := set $redisDefaults "overrideBaseUrl" (include "spinnaker.redisBaseURL" $) -}}
+{{- end }}
 {{- $_ := set $settings "redis.yml" $redisDefaults -}}
 
 {{/* Defaults: gate service */}}
