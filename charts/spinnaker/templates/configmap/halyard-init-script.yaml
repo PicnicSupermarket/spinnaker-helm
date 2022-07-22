@@ -15,9 +15,7 @@ data:
     # Use Redis deployed via the dependent Helm chart
     rm -rf /tmp/spinnaker/.hal/default/service-settings
     mkdir -p /tmp/spinnaker/.hal/default/service-settings
-    {{- if .Values.redis.auth.existingSecret }}
-    echo "overrideBaseUrl: redis://$(cat /opt/redis/redis-password)@{{ .Release.Name }}-redis-master:6379" >> /tmp/service-settings/redis.yml
-    {{- end }}
+    echo "overrideBaseUrl: {{ include "spinnaker.redisBaseURL" . }}" >> /tmp/service-settings/redis.yml
     cp /tmp/service-settings/* /tmp/spinnaker/.hal/default/service-settings/
 
     rm -rf /tmp/spinnaker/.hal/default/profiles
