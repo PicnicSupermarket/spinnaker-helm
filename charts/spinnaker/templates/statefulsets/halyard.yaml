@@ -61,6 +61,10 @@ spec:
         - name: halyard-bom
           mountPath: /tmp/halyard-bom
         {{- end }}
+        {{- if .Values.redis.auth.existingSecret }}
+        - name: redis-secret
+          mountPath: /opt/redis
+        {{- end }}
         - name: halyard-initscript
           mountPath: /tmp/initscript
         {{- if .Values.halyard.customCerts.enabled }}
@@ -98,6 +102,11 @@ spec:
           {{- else }}
           secretName: {{ template "spinnaker.fullname" . }}-registry
           {{- end }}
+      {{- if .Values.redis.auth.existingSecret }}
+      - name: redis-secret
+        secret:
+          secretName: {{ .Values.redis.auth.existingSecret }}
+      {{- end }}
       {{- if or .Values.s3.accountSecret (and .Values.s3.accessKey .Values.s3.secretKey) }}
       - name: s3-secrets
         secret:
