@@ -39,7 +39,7 @@ Render settings for each service by merging predefined defaults with values pass
 {{- /* Convert the content of settings key to YAML string */}}
 {{- range $filename, $content := $settings -}}
 {{- if not (typeIs "string" $content) -}}
-{{- $_ := set $settings $filename ($content | toYaml) -}}
+{{- $_ := set $settings $filename (printf "%s\n" ($content | toYaml)) -}}
 {{- end -}}
 {{- end -}}
 
