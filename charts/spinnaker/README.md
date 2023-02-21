@@ -57,9 +57,9 @@ kubeConfig:
   contexts:
   # Names of contexts available in the uploaded kubeconfig
   - my-context
-  # This is the context from the list above that you would like
-  # to deploy Spinnaker itself to.
-  deploymentContext: my-context
+  # This is the Spinnaker account that you would like to use to
+  # deploy Spinnaker itself with.
+  deploymentAccount: my-context
 ```
 
 ### Configuring arbitrary clusters with s3
@@ -81,9 +81,9 @@ kubeConfig:
   contexts:
   # Names of contexts available in the uploaded kubeconfig
   - my-context
-  # This is the context from the list above that you would like
-  # to deploy Spinnaker itself to.
-  deploymentContext: my-context
+  # This is the Spinnaker account that you would like to use to
+  # deploy Spinnaker itself with.
+  deploymentAccount: my-context
 ```
 
 ## Specifying Docker Registries and Valid Images (Repositories)

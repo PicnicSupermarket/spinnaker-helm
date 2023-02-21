@@ -109,6 +109,7 @@ data:
     {{- end }}
 
     $HAL_COMMAND config provider kubernetes enable
+    {{- if $.Values.kubeConfig.accountPerContext }}
     {{- range $index, $context := .Values.kubeConfig.contexts }}
 
     if $HAL_COMMAND config provider kubernetes account get {{ $context }}; then
@@ -129,7 +130,29 @@ data:
                 {{ if $.Values.kubeConfig.liveManifestCalls }}--live-manifest-calls true{{ end }} \
                 --provider-version v2
     {{- end }}
-    $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentContext }} --type distributed \
+    {{- end }}
+
+    {{- if $.Values.kubeConfig.accountPerContextAndNamespace }}
+    {{- range $context := .Values.kubeConfig.contexts }}
+    {{- range $namespacedAccount := $.Values.kubeConfig.namespacedAccounts }}
+    {{- $accountName := printf "%s.%s" $context $namespacedAccount.namespace }}
+    
+    if $HAL_COMMAND config provider kubernetes account get {{ $accountName }}; then
+      PROVIDER_COMMAND='edit'
+    else
+      PROVIDER_COMMAND='add'
+    fi
+
+    $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $accountName }} --docker-registries dockerhub \
+                --context {{ $context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
+                {{ if $.Values.kubeConfig.enabled }}--kubeconfig-file {{ template "spinnaker.kubeconfig" $ }}{{ end }} \
+                {{ if $.Values.kubeConfig.onlySpinnakerManaged.enabled }}--only-spinnaker-managed true{{ end }} \
+                --namespaces={{ $namespacedAccount.namespace }} \
+                --provider-version v2
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentAccount }} --type distributed \
                            --location {{ .Release.Namespace }}
     # Use Deck to route to Gate
     $HAL_COMMAND config security api edit --no-validate --override-base-url /gate
