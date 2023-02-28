@@ -56,10 +56,10 @@ kubeConfig:
   secretKey: config
   contexts:
   # Names of contexts available in the uploaded kubeconfig
-  - my-context
+  - production
   # The Spinnaker account that you would like to use to deploy Spinnaker itself
   # with.
-  deploymentAccount: my-context
+  deploymentAccount: production
 ```
 
 ### Configuring arbitrary clusters with s3
@@ -80,10 +80,10 @@ kubeConfig:
   encryptedKubeconfig: encrypted:s3!r:us-west-2!b:mybucket!f:mykubeconfig
   contexts:
   # Names of contexts available in the uploaded kubeconfig
-  - my-context
+  - production
   # The Spinnaker account that you would like to use to deploy Spinnaker itself
   # with.
-  deploymentAccount: my-context
+  deploymentAccount: production
 ```
 
 ## Specifying Docker Registries and Valid Images (Repositories)
