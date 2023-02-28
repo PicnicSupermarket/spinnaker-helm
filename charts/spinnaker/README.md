@@ -57,8 +57,8 @@ kubeConfig:
   contexts:
   # Names of contexts available in the uploaded kubeconfig
   - my-context
-  # This is the Spinnaker account that you would like to use to
-  # deploy Spinnaker itself with.
+  # The Spinnaker account that you would like to use to deploy Spinnaker itself
+  # with.
   deploymentAccount: my-context
 ```
 
@@ -81,8 +81,8 @@ kubeConfig:
   contexts:
   # Names of contexts available in the uploaded kubeconfig
   - my-context
-  # This is the Spinnaker account that you would like to use to
-  # deploy Spinnaker itself with.
+  # The Spinnaker account that you would like to use to deploy Spinnaker itself
+  # with.
   deploymentAccount: my-context
 ```
 

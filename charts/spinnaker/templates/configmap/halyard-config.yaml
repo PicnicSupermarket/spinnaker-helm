@@ -109,7 +109,7 @@ data:
     {{- end }}
 
     $HAL_COMMAND config provider kubernetes enable
-    {{- if $.Values.kubeConfig.accountPerContext }}
+    {{- if .Values.kubeConfig.accountPerContext }}
     {{- range $index, $context := .Values.kubeConfig.contexts }}
 
     if $HAL_COMMAND config provider kubernetes account get {{ $context }}; then
@@ -132,9 +132,9 @@ data:
     {{- end }}
     {{- end }}
 
-    {{- if $.Values.kubeConfig.accountPerContextAndNamespace }}
+    {{- if .Values.kubeConfig.accountPerContextAndNamespace }}
     {{- range $context := .Values.kubeConfig.contexts }}
-    {{- range $namespacedAccount := $.Values.kubeConfig.namespacedAccounts }}
+    {{- range $namespacedAccount := $.Values.kubeConfig.namespacePartitionedAccounts }}
     {{- $accountName := printf "%s.%s" $context $namespacedAccount.namespace }}
     
     if $HAL_COMMAND config provider kubernetes account get {{ $accountName }}; then
