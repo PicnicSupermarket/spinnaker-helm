@@ -109,34 +109,8 @@ data:
     {{- end }}
 
     $HAL_COMMAND config provider kubernetes enable
-    {{- if .Values.kubeConfig.accountPerContext }}
-    {{- range $index, $context := .Values.kubeConfig.contexts }}
+    {{- range $accountName, $values := .Values.kubeConfig.accounts }}
 
-    if $HAL_COMMAND config provider kubernetes account get {{ $context }}; then
-      PROVIDER_COMMAND='edit'
-    else
-      PROVIDER_COMMAND='add'
-    fi
-
-    $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $context }} --docker-registries dockerhub \
-                --context {{ $context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
-                {{ if $.Values.kubeConfig.enabled }}--kubeconfig-file {{ template "spinnaker.kubeconfig" $ }}{{ end }} \
-                {{ if $.Values.kubeConfig.onlySpinnakerManaged.enabled }}--only-spinnaker-managed true{{ end }} \
-                {{ if not $.Values.kubeConfig.checkPermissionsOnStartup }}--check-permissions-on-startup false{{ end }} \
-                {{ if $.Values.kubeConfig.nameSpaces }}--namespaces={{ template "nameSpaces" $ }}{{ end }} \
-                {{ if not $.Values.kubeConfig.nameSpaces }}--omit-namespaces={{ template "omittedNameSpaces" $ }}{{ end }} \
-                {{ if $.Values.kubeConfig.omittedKinds }}--omit-kinds={{ template "omittedKinds" $ }}{{ end }} \
-                {{ if $.Values.kubeConfig.kinds }}--kinds={{ template "k8sKinds" $ }}{{ end }} \
-                {{ if $.Values.kubeConfig.liveManifestCalls }}--live-manifest-calls true{{ end }} \
-                --provider-version v2
-    {{- end }}
-    {{- end }}
-
-    {{- if .Values.kubeConfig.accountPerContextAndNamespace }}
-    {{- range $context := .Values.kubeConfig.contexts }}
-    {{- range $namespacedAccount := $.Values.kubeConfig.namespacePartitionedAccounts }}
-    {{- $accountName := printf "%s.%s" $context $namespacedAccount.namespace }}
-    
     if $HAL_COMMAND config provider kubernetes account get {{ $accountName }}; then
       PROVIDER_COMMAND='edit'
     else
@@ -144,14 +118,20 @@ data:
     fi
 
     $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $accountName }} --docker-registries dockerhub \
-                --context {{ $context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
+                --context {{ $values.context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
                 {{ if $.Values.kubeConfig.enabled }}--kubeconfig-file {{ template "spinnaker.kubeconfig" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.onlySpinnakerManaged.enabled }}--only-spinnaker-managed true{{ end }} \
-                --namespaces={{ $namespacedAccount.namespace }} \
+                {{ if not $.Values.kubeConfig.checkPermissionsOnStartup }}--check-permissions-on-startup false{{ end }} \
+                {{ if $values.namespaces }}--namespaces={{ join "," $values.namespaces }}{{ end }} \
+                {{ if not $values.namespaces }}--omit-namespaces={{ template "omittedNameSpaces" $ }}{{ end }} \
+                {{ if $.Values.kubeConfig.omittedKinds }}--omit-kinds={{ template "omittedKinds" $ }}{{ end }} \
+                {{ if $.Values.kubeConfig.kinds }}--kinds={{ template "k8sKinds" $ }}{{ end }} \
+                {{ if $.Values.kubeConfig.liveManifestCalls }}--live-manifest-calls true{{ end }} \
+                {{ if $values.readPermissions }}--read-permissions {{ join "," $values.readPermissions }}{{ end }} \
+                {{ if $values.writePermissions }}--write-permissions {{ join "," $values.writePermissions }}{{ end }} \
                 --provider-version v2
     {{- end }}
-    {{- end }}
-    {{- end }}
+
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentAccount }} --type distributed \
                            --location {{ .Release.Namespace }}
     # Use Deck to route to Gate
