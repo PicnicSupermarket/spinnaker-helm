@@ -109,7 +109,7 @@ data:
     {{- end }}
 
     $HAL_COMMAND config provider kubernetes enable
-    {{- range $accountName, $values := .Values.kubeConfig.accounts }}
+    {{- range $accountName, $account := .Values.kubeConfig.accounts }}
 
     if $HAL_COMMAND config provider kubernetes account get {{ $accountName }}; then
       PROVIDER_COMMAND='edit'
@@ -118,17 +118,17 @@ data:
     fi
 
     $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $accountName }} --docker-registries dockerhub \
-                --context {{ $values.context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
+                --context {{ $account.context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
                 {{ if $.Values.kubeConfig.enabled }}--kubeconfig-file {{ template "spinnaker.kubeconfig" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.onlySpinnakerManaged.enabled }}--only-spinnaker-managed true{{ end }} \
                 {{ if not $.Values.kubeConfig.checkPermissionsOnStartup }}--check-permissions-on-startup false{{ end }} \
-                {{ if $values.namespaces }}--namespaces={{ join "," $values.namespaces }}{{ end }} \
-                {{ if not $values.namespaces }}--omit-namespaces={{ template "omittedNameSpaces" $ }}{{ end }} \
+                {{ if $account.namespaces }}--namespaces={{ join "," $account.namespaces }}{{ end }} \
+                {{ if not $account.namespaces }}--omit-namespaces={{ template "omittedNameSpaces" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.omittedKinds }}--omit-kinds={{ template "omittedKinds" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.kinds }}--kinds={{ template "k8sKinds" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.liveManifestCalls }}--live-manifest-calls true{{ end }} \
-                {{ if $values.readPermissions }}--read-permissions {{ join "," $values.readPermissions }}{{ end }} \
-                {{ if $values.writePermissions }}--write-permissions {{ join "," $values.writePermissions }}{{ end }} \
+                {{ if $account.readPermissions }}--read-permissions {{ join "," $account.readPermissions }}{{ end }} \
+                {{ if $account.writePermissions }}--write-permissions {{ join "," $values.writePermissions }}{{ end }} \
                 --provider-version v2
     {{- end }}
 
