@@ -128,7 +128,7 @@ data:
                 {{ if $.Values.kubeConfig.kinds }}--kinds={{ template "k8sKinds" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.liveManifestCalls }}--live-manifest-calls true{{ end }} \
                 {{ if $account.readPermissions }}--read-permissions {{ join "," $account.readPermissions }}{{ end }} \
-                {{ if $account.writePermissions }}--write-permissions {{ join "," $values.writePermissions }}{{ end }} \
+                {{ if $account.writePermissions }}--write-permissions {{ join "," $account.writePermissions }}{{ end }} \
                 --provider-version v2
     {{- end }}
 
