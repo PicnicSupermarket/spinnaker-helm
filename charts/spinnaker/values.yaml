@@ -181,10 +181,18 @@ kubeConfig:
     # default:
       # context: default
       # Use this to limit the namespaces this kubernetes account will access.
-      # Note, if you use `namespaces`, global `omittedNameSpaces` will not be used.
+      # Note, if you use `namespaces`, account-specific nor global
+      # `omittedNameSpaces` will be used.
       # namespaces:
       #   - namespace1
       #   - namespace2
+      # The namespaces not to include for this account. Has preference over
+      # globally configured `omittedNameSpaces`. Will not be used when account-
+      # specific namespaces are configured.
+      # omittedNamespaces:
+      #   - kube-system
+      #   - kube-public
+      #   - namespace3
       # Use this to limit the Spinnaker RBAC roles than can read from Kubernetes.
       # readPermissions:
       #   - role1
@@ -195,6 +203,8 @@ kubeConfig:
       #   - role2
   # The Spinnaker account that will be used to deploy the Spinnaker cluster to.
   deploymentAccount: default
+  # The namespaces not to include for all accounts. Will not be used when
+  # account-specific namespaces or omitted namespaces are configured.
   omittedNameSpaces:
   - kube-system
   - kube-public
