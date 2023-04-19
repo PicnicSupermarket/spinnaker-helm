@@ -170,14 +170,6 @@ kubeConfig:
   # Use this when you want to register arbitrary clusters with Spinnaker
   # Upload your ~/kube/.config to a secret
   enabled: false
-  # Creates a Spinnaker account per context in `.kubeConfig.contexts` with the
-  # same name. Can be used together with
-  # `.kubeConfig.accountPerContextAndNamespace`.
-  accountPerContext: true
-  # Creates a Spinnaker account for each combination of context and namespace
-  # as per `contexts` and `namespacePartitionedAccounts`. Can be used together
-  # with`accountPerContext`.
-  accountPerContextAndNamespace: false
   # secretName: my-kubeconfig
   # secretKey: config
   # Use this when you want to configure halyard to reference a kubeconfig from s3
@@ -185,28 +177,39 @@ kubeConfig:
   # For more info visit:
   #   https://www.spinnaker.io/reference/halyard/secrets/s3-secrets/#secrets-in-s3
   # encryptedKubeconfig: encrypted:s3!r:us-west-2!b:mybucket!f:mykubeconfig
-  # List of contexts from the kubeconfig to make available to Spinnaker
-  contexts:
-  - default
+  accounts:
+    # default:
+      # context: default
+      # Use this to limit the namespaces this kubernetes account will access.
+      # Note, if you use `namespaces`, account-specific nor global
+      # `omittedNameSpaces` will be used.
+      # namespaces:
+      #   - namespace1
+      #   - namespace2
+      # The namespaces not to include for this account. Has preference over
+      # globally configured `omittedNameSpaces`. Will not be used when account-
+      # specific namespaces are configured.
+      # omittedNamespaces:
+      #   - kube-system
+      #   - kube-public
+      #   - namespace3
+      # Use this to limit the Spinnaker RBAC roles than can read from Kubernetes.
+      # readPermissions:
+      #   - role1
+      #   - role2
+      # Use this to limit the Spinnaker RBAC roles than can write (i.e. Deploy) to Kubernetes.
+      # writePermissions:
+      #   - role1
+      #   - role2
   # The Spinnaker account that will be used to deploy the Spinnaker cluster to.
   deploymentAccount: default
-  # Use this to limit the namespaces this kubernetes account will access.
-  # Note, if you use nameSpaces, omittedNameSpaces will not be used.
-  # Note, the casing of the nameSpace variable here.
-  # nameSpaces:
-  # - namespace1
-  # - namespace2
+  # The namespaces not to include for all accounts. Will not be used when
+  # account-specific namespaces or omitted namespaces are configured.
   omittedNameSpaces:
   - kube-system
   - kube-public
   onlySpinnakerManaged:
     enabled: false
-  # A list of per-namespace account-related configuration. For the purpose of
-  # this chart, this only specifies the `namespace`. But this can be extended
-  # for own Helm templating to further configure Spinnaker (e.g. assigning
-  # permissions to the accounts).
-  namespacePartitionedAccounts:
-    - namespace: default
 
   # When false, clouddriver will skip the permission checks for all kubernetes kinds at startup.
   # This can save a great deal of time during clouddriver startup when you have many kubernetes

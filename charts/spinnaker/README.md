@@ -54,9 +54,10 @@ kubeConfig:
   enabled: true
   secretName: my-kubeconfig
   secretKey: config
-  contexts:
-  # Names of contexts available in the uploaded kubeconfig
-  - production
+  accounts:
+    production:
+       # Context available in the uploaded kubeconfig
+       context: production
   # The Spinnaker account that you would like to use to deploy Spinnaker itself
   # with.
   deploymentAccount: production
@@ -78,9 +79,10 @@ kubeConfig:
   # secretName: my-kubeconfig
   # secretKey: config
   encryptedKubeconfig: encrypted:s3!r:us-west-2!b:mybucket!f:mykubeconfig
-  contexts:
-  # Names of contexts available in the uploaded kubeconfig
-  - production
+  accounts:
+    production:
+       # Context available in the uploaded kubeconfig
+       context: production
   # The Spinnaker account that you would like to use to deploy Spinnaker itself
   # with.
   deploymentAccount: production
