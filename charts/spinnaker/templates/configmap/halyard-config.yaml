@@ -129,8 +129,8 @@ data:
                 {{ if $.Values.kubeConfig.omittedKinds }}--omit-kinds={{ template "omittedKinds" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.kinds }}--kinds={{ template "k8sKinds" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.liveManifestCalls }}--live-manifest-calls true{{ end }} \
-                {{ if $account.readPermissions }}--read-permissions {{ join "," $account.readPermissions }}{{ end }} \
-                {{ if $account.writePermissions }}--write-permissions {{ join "," $account.writePermissions }}{{ end }} \
+                {{ if $account.readPermissions }}--read-permissions {{ join " --read-permissions " $account.readPermissions }}{{ end }} \
+                {{ if $account.writePermissions }}--write-permissions {{ join " --write-permissions " $account.writePermissions }}{{ end }} \
                 --provider-version v2
     {{- end }}
 
