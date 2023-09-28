@@ -132,6 +132,12 @@ data:
                 {{ if $account.readPermissions }}--read-permissions {{ join " --read-permissions " $account.readPermissions }}{{ end }} \
                 {{ if $account.writePermissions }}--write-permissions {{ join " --write-permissions " $account.writePermissions }}{{ end }} \
                 --provider-version v2
+
+    {{- range $index, $customResource := .Values.kubeConfig.customResources }}
+    $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $name }} --docker-registries dockerhub \
+                --context {{ $account.context }} --provider-version v2 --add-custom-resource={{ $customResource }} --spinnaker-kind=serverGroupManager --no-validate
+    {{- end }}
+    EOF
     {{- end }}
 
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentAccount }} --type distributed \
