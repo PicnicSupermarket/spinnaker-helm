@@ -111,13 +111,14 @@ data:
     $HAL_COMMAND config provider kubernetes enable
     {{- range $name, $account := .Values.kubeConfig.accounts }}
 
+    cat > /tmp/upsert_{{ regexReplaceAll "\\.|-" $name "_" }} <<- EOF
     if $HAL_COMMAND config provider kubernetes account get {{ $name }}; then
       PROVIDER_COMMAND='edit'
     else
       PROVIDER_COMMAND='add'
     fi
 
-    $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $name }} --docker-registries dockerhub \
+    $HAL_COMMAND config provider kubernetes account \$PROVIDER_COMMAND {{ $name }} --docker-registries dockerhub \
                 --context {{ $account.context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
                 {{ if $.Values.kubeConfig.enabled }}--kubeconfig-file {{ template "spinnaker.kubeconfig" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.onlySpinnakerManaged.enabled }}--only-spinnaker-managed true{{ end }} \
@@ -132,7 +133,15 @@ data:
                 {{ if $account.readPermissions }}--read-permissions {{ join " --read-permissions " $account.readPermissions }}{{ end }} \
                 {{ if $account.writePermissions }}--write-permissions {{ join " --write-permissions " $account.writePermissions }}{{ end }} \
                 --provider-version v2
+    EOF
     {{- end }}
+
+    # Run the commands in parallel over the account names limited by the specified parallelism factor.
+    xargs -P {{ .Values.halyard.installParallelism }} -I {} sh -c 'eval "$1"' - {} <<'EOF'
+    {{- range $name, $account := .Values.kubeConfig.accounts }}
+    source /tmp/upsert_{{ regexReplaceAll "\\.|-" $name "_" }}
+    {{- end }}
+    EOF
 
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentAccount }} --type distributed \
                            --location {{ .Release.Namespace }}
