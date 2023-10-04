@@ -134,7 +134,7 @@ data:
                 --provider-version v2
 
     {{- range $index, $customResource := .Values.kubeConfig.customResources }}
-    $HAL_COMMAND config provider kubernetes account \$PROVIDER_COMMAND {{ $name }} --docker-registries dockerhub \
+    $HAL_COMMAND config provider kubernetes account edit {{ $name }} --docker-registries dockerhub \
                 --context {{ $account.context }} --provider-version v2 --add-custom-resource={{ $customResource.kubernetesKind }} --spinnaker-kind={{ $customResource.spinnakerKind }} --no-validate
     {{- end }}
     EOF
