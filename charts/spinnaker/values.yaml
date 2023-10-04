@@ -130,6 +130,8 @@ halyard:
     ## Enable to override the default cacerts with your own one
     enabled: false
     secretName: custom-cacerts
+  # How many Kubernetes account commands are executed in parallel.
+  installParallelism: 8
 
 # Define which registries and repositories you want available in your
 # Spinnaker pipeline definitions
