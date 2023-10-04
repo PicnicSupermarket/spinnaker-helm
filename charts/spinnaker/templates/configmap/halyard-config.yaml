@@ -137,9 +137,9 @@ data:
     {{- end }}
 
     # Run the commands in parallel over the account names limited by the specified parallelism factor.
-    xargs -P {{ .Values.halyard.installParallelism }} -I {} sh -c 'eval "$1"' - {} <<'EOF'
+    xargs -P {{ .Values.halyard.installParallelism }} -I {} sh {} <<'EOF'
     {{- range $name, $account := .Values.kubeConfig.accounts }}
-    source /tmp/upsert_{{ regexReplaceAll "\\.|-" $name "_" }}
+    /tmp/upsert_{{ regexReplaceAll "\\.|-" $name "_" }}
     {{- end }}
     EOF
 
