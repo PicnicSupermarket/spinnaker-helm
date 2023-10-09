@@ -111,7 +111,18 @@ data:
     $HAL_COMMAND config provider kubernetes enable
     {{- range $name, $account := .Values.kubeConfig.accounts }}
 
+<<<<<<< HEAD
     if $HAL_COMMAND config provider kubernetes account get {{ $name }}; then
+=======
+    # Create a script to upsert each account. This enables parallel execution later on.
+    # N.B.: \$ is used to not apply variable substitution, as those commands must be executed in
+    #       context of the script.
+    cat > /tmp/upsert_{{ regexReplaceAll "\\.|-" $name "_" }} <<- EOF
+
+    ACCOUNT="\$($HAL_COMMAND config provider kubernetes account get {{ $name }} --no-validate --quiet --output=json)"
+    # The account exists already.
+    if [ "\${?}" -eq 0 ]; then
+>>>>>>> 7f20198 (PSM-2546 Only add if the resource does not exist yet)
       PROVIDER_COMMAND='edit'
     else
       PROVIDER_COMMAND='add'
@@ -133,9 +144,17 @@ data:
                 {{ if $account.writePermissions }}--write-permissions {{ join " --write-permissions " $account.writePermissions }}{{ end }} \
                 --provider-version v2
 
-    {{- range $index, $customResource := .Values.kubeConfig.customResources }}
-    $HAL_COMMAND config provider kubernetes account edit {{ $name }} --add-custom-resource={{ $customResource.kubernetesKind }} \
+    function custom_resource_exists() {
+      local kubernetes_kind="\${1}"
+      local spinnaker_kind="\${2}"
+      echo "\${ACCOUNT}" | grep -q '"kubernetesKind":"'"\${kubernetes_kind}"'","spinnakerKind":"'"\${spinnaker_kind}"'"'
+    }
+
+    {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
+    if ! custom_resource_exists '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}'; then
+        $HAL_COMMAND config provider kubernetes account edit {{ $name }} --add-custom-resource={{ $customResource.kubernetesKind }}  \
                 --spinnaker-kind={{ $customResource.spinnakerKind }} --no-validate
+    fi
     {{- end }}
     EOF
     {{- end }}
