@@ -110,9 +110,9 @@ data:
 
     $HAL_COMMAND config provider kubernetes enable
     {{- range $name, $account := .Values.kubeConfig.accounts }}
-    ACCOUNT="\$($HAL_COMMAND config provider kubernetes account get {{ $name }} --no-validate --quiet --output=json)"
+    ACCOUNT="$($HAL_COMMAND config provider kubernetes account get {{ $name }} --no-validate --quiet --output=json || exit 0)"
     # The account exists already.
-    if [ "\${?}" -eq 0 ]; then
+    if [ -n "${ACCOUNT}" ]; then
       PROVIDER_COMMAND='edit'
     else
       PROVIDER_COMMAND='add'
@@ -135,9 +135,9 @@ data:
                 --provider-version v2
 
     function custom_resource_exists() {
-      local kubernetes_kind="\${1}"
-      local spinnaker_kind="\${2}"
-      echo "\${ACCOUNT}" | grep -q '"kubernetesKind":"'"\${kubernetes_kind}"'","spinnakerKind":"'"\${spinnaker_kind}"'"'
+      local kubernetes_kind="${1}"
+      local spinnaker_kind="${2}"
+      echo "${ACCOUNT}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
     }
 
     {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
@@ -146,7 +146,6 @@ data:
                 --spinnaker-kind={{ $customResource.spinnakerKind }} --no-validate
     fi
     {{- end }}
-    EOF
     {{- end }}
 
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentAccount }} --type distributed \
