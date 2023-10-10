@@ -109,6 +109,7 @@ data:
     {{- end }}
 
     $HAL_COMMAND config provider kubernetes enable
+
     {{- range $name, $account := .Values.kubeConfig.accounts }}
     ACCOUNT="$($HAL_COMMAND config provider kubernetes account get {{ $name }} --no-validate --quiet --output=json || exit 0)"
     # The account exists already.
@@ -140,10 +141,19 @@ data:
       echo "${ACCOUNT}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
     }
 
+    function kubernetes_kind_is_bound() {
+      local kubernetes_kind="${1}"
+      echo "${ACCOUNT}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'"'
+    }
+
     {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
     if ! custom_resource_exists '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}'; then
-        $HAL_COMMAND config provider kubernetes account edit {{ $name }} --add-custom-resource={{ $customResource.kubernetesKind }}  \
-                --spinnaker-kind={{ $customResource.spinnakerKind }} --no-validate
+      if kubernetes_kind_is_bound '{{ $customResource.kubernetesKind }}'; then
+        $HAL_COMMAND config provider kubernetes account edit {{ $name }} --remove-custom-resource={{ $customResource.kubernetesKind }} \
+          --no-validate
+      fi
+      $HAL_COMMAND config provider kubernetes account edit {{ $name }} --add-custom-resource={{ $customResource.kubernetesKind }} \
+        --spinnaker-kind={{ $customResource.spinnakerKind }} --no-validate
     fi
     {{- end }}
     {{- end }}
