@@ -110,6 +110,19 @@ data:
 
     $HAL_COMMAND config provider kubernetes enable
 
+    function custom_resource_exists() {
+      local account="${1}"
+      local kubernetes_kind="${2}"
+      local spinnaker_kind="${3}"
+      echo "${account}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
+    }
+
+    function kubernetes_kind_is_bound() {
+      local account="${1}"
+      local kubernetes_kind="${2}"
+      echo "${account}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'"'
+    }
+
     {{- range $name, $account := .Values.kubeConfig.accounts }}
     ACCOUNT="$($HAL_COMMAND config provider kubernetes account get {{ $name }} --no-validate --quiet --output=json || exit 0)"
     # The account exists already.
@@ -135,20 +148,9 @@ data:
                 {{ if $account.writePermissions }}--write-permissions {{ join " --write-permissions " $account.writePermissions }}{{ end }} \
                 --provider-version v2
 
-    function custom_resource_exists() {
-      local kubernetes_kind="${1}"
-      local spinnaker_kind="${2}"
-      echo "${ACCOUNT}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
-    }
-
-    function kubernetes_kind_is_bound() {
-      local kubernetes_kind="${1}"
-      echo "${ACCOUNT}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'"'
-    }
-
     {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
-    if ! custom_resource_exists '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}'; then
-      if kubernetes_kind_is_bound '{{ $customResource.kubernetesKind }}'; then
+    if ! custom_resource_exists "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}'; then
+      if kubernetes_kind_is_bound "${ACCOUNT}" '{{ $customResource.kubernetesKind }}'; then
         $HAL_COMMAND config provider kubernetes account edit {{ $name }} --remove-custom-resource={{ $customResource.kubernetesKind }} \
           --no-validate
       fi
