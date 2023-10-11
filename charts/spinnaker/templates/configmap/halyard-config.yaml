@@ -114,13 +114,13 @@ data:
       local account="${1}"
       local kubernetes_kind="${2}"
       local spinnaker_kind="${3}"
-      echo "${account}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
+      echo "${account}" | grep --quiet '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
     }
 
     function kubernetes_kind_is_bound() {
       local account="${1}"
       local kubernetes_kind="${2}"
-      echo "${account}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'"'
+      echo "${account}" | grep --quiet '"kubernetesKind":"'"${kubernetes_kind}"'"'
     }
 
     {{- range $name, $account := .Values.kubeConfig.accounts }}
@@ -149,8 +149,8 @@ data:
                 --provider-version v2
 
     {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
-    if ! custom_resource_exists "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}'; then
-      if kubernetes_kind_is_bound "${ACCOUNT}" '{{ $customResource.kubernetesKind }}'; then
+    if [ ! custom_resource_exists "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}' ]; then
+      if [ kubernetes_kind_is_bound "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' ]; then
         $HAL_COMMAND config provider kubernetes account edit {{ $name }} --remove-custom-resource={{ $customResource.kubernetesKind }} \
           --no-validate
       fi
