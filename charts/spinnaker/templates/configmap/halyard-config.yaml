@@ -150,6 +150,7 @@ data:
 
     {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
     if [ ! custom_resource_exists "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}' ]; then
+      # Another mapping for this Kubernetes kind exists but we can only have one, so we recreate it.
       if [ kubernetes_kind_is_bound "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' ]; then
         $HAL_COMMAND config provider kubernetes account edit {{ $name }} --remove-custom-resource={{ $customResource.kubernetesKind }} \
           --no-validate
