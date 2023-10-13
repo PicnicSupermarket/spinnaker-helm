@@ -226,6 +226,12 @@ kubeConfig:
   # omittedKinds:
   # -
 
+  # A list of Kubernetes custom resource to managed by clouddriver and made available
+  # for use in patch and delete manifest stages.
+  # customResources:
+  #   - kubernetesKind: workflows.argoproj.io
+  #     spinnakerKind: ServerGroupManagers
+
   # When true, clouddriver will query manifest status during pipeline executions using live
   # data rather than the cache. This eliminates all time spent in the “force cache refresh”
   # task in pipelines, greatly reducing execution time.
@@ -234,7 +240,7 @@ kubeConfig:
 # Change this if youd like to expose Spinnaker outside the cluster
 ingress:
   enabled: false
-  # className: 
+  # className:
   # host: spinnaker.example.org
   # annotations:
     # ingress.kubernetes.io/ssl-redirect: 'true'

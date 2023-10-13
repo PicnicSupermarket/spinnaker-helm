@@ -109,9 +109,24 @@ data:
     {{- end }}
 
     $HAL_COMMAND config provider kubernetes enable
-    {{- range $name, $account := .Values.kubeConfig.accounts }}
 
-    if $HAL_COMMAND config provider kubernetes account get {{ $name }}; then
+    function custom_resource_exists() {
+      local account="${1}"
+      local kubernetes_kind="${2}"
+      local spinnaker_kind="${3}"
+      echo "${account}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'","spinnakerKind":"'"${spinnaker_kind}"'"'
+    }
+
+    function kubernetes_kind_is_bound() {
+      local account="${1}"
+      local kubernetes_kind="${2}"
+      echo "${account}" | grep -q '"kubernetesKind":"'"${kubernetes_kind}"'"'
+    }
+
+    {{- range $name, $account := .Values.kubeConfig.accounts }}
+    ACCOUNT="$($HAL_COMMAND config provider kubernetes account get {{ $name }} --no-validate --quiet --output=json || exit 0)"
+    # The account exists already.
+    if [ -n "${ACCOUNT}" ]; then
       PROVIDER_COMMAND='edit'
     else
       PROVIDER_COMMAND='add'
@@ -132,6 +147,18 @@ data:
                 {{ if $account.readPermissions }}--read-permissions {{ join " --read-permissions " $account.readPermissions }}{{ end }} \
                 {{ if $account.writePermissions }}--write-permissions {{ join " --write-permissions " $account.writePermissions }}{{ end }} \
                 --provider-version v2
+
+    {{- range $index, $customResource := $.Values.kubeConfig.customResources }}
+    if ! custom_resource_exists "${ACCOUNT}" '{{ $customResource.kubernetesKind }}' '{{ $customResource.spinnakerKind }}'; then
+      # Another mapping for this Kubernetes kind exists but we can only have one, so we recreate it.
+      if kubernetes_kind_is_bound "${ACCOUNT}" '{{ $customResource.kubernetesKind }}'; then
+        $HAL_COMMAND config provider kubernetes account edit {{ $name }} --remove-custom-resource={{ $customResource.kubernetesKind }} \
+          --no-validate
+      fi
+      $HAL_COMMAND config provider kubernetes account edit {{ $name }} --add-custom-resource={{ $customResource.kubernetesKind }} \
+        --spinnaker-kind={{ $customResource.spinnakerKind }} --no-validate
+    fi
+    {{- end }}
     {{- end }}
 
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentAccount }} --type distributed \
