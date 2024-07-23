@@ -360,6 +360,28 @@ rbac:
   # Specifies whether PSP resources should be created
   pspEnabled: false
 
+pdb:
+  # Specifies whether a PodDisruptionBudget should be created
+  #
+  create: true
+  services:
+    - clouddriver
+    - deck
+    - echo-worker
+    - fiat
+    - front50
+    - gate
+    - igor
+    - rosco
+  # Min number or percentage of pods that must still be available after the
+  # eviction
+  #
+  minAvailable: 40%
+  # Max number of pods that can be unavailable after the eviction
+  #
+  maxUnavailable: ""
+
+
 serviceAccount:
   # Specifies whether a ServiceAccount should be created
   create: true

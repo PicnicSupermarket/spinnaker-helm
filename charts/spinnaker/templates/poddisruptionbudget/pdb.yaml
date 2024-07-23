@@ -1,0 +1,22 @@
+{{- if .Values.pdb.create }}
+{{- range .Values.pdb.services }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "spinnaker.fullname" $ }}-{{ . }}
+  labels:
+{{ include "spinnaker.standard-labels" $ | indent 4 }}
+spec:
+  {{- if $.Values.pdb.minAvailable }}
+  minAvailable: {{ $.Values.pdb.minAvailable }}
+  {{- end }}
+  {{- if $.Values.pdb.maxUnavailable }}
+  maxUnavailable: {{ $.Values.pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: {{ . }}
+      app.kubernetes.io/part-of: spinnaker
+{{- end }}
+{{- end }}
