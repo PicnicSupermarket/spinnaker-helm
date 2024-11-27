@@ -136,6 +136,11 @@ halyard:
 # For more info visit:
 #   https://www.spinnaker.io/setup/providers/docker-registry/
 
+deploy:
+  # Whether to run Deployment validators during $HAL_COMMAND deploy. By
+  # default, runs the validators.
+  noValidate: false
+
 # Configure your Docker registries here
 dockerRegistries:
 - name: dockerhub
