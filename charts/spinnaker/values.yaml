@@ -146,6 +146,7 @@ dockerRegistries:
 - name: dockerhub
   address: index.docker.io
   noValidate: false
+  repositoriesRegex: '^filtered-repository$'
   repositories:
     - library/alpine
     - library/ubuntu
