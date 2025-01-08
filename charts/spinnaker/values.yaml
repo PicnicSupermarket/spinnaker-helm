@@ -146,6 +146,10 @@ dockerRegistries:
 - name: dockerhub
   address: index.docker.io
   noValidate: false
+  cacheThreads: 1
+  paginateSize: 100
+  timeoutMillis: 60000
+  # Repository settings are mutually exlusive.
   repositoriesRegex: '^filtered-repository$'
   repositories:
     - library/alpine
