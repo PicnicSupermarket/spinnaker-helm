@@ -149,7 +149,7 @@ dockerRegistries:
   cacheThreads: 1
   paginateSize: 100
   timeoutMillis: 60000
-  # Repository settings are mutually exlusive.
+  # Repository settings are mutually exclusive.
   repositoriesRegex: '^filtered-repository$'
   repositories:
     - library/alpine
