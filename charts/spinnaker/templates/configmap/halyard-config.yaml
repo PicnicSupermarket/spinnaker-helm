@@ -136,7 +136,7 @@ data:
       PROVIDER_COMMAND='add'
     fi
 
-    $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $name }} --docker-registries dockerhub \
+    $HAL_COMMAND config provider kubernetes account $PROVIDER_COMMAND {{ $name }} --docker-registries ecr \
                 --context {{ $account.context }} {{ if not $.Values.kubeConfig.enabled }}--service-account true{{ end }} \
                 {{ if $.Values.kubeConfig.enabled }}--kubeconfig-file {{ template "spinnaker.kubeconfig" $ }}{{ end }} \
                 {{ if $.Values.kubeConfig.onlySpinnakerManaged.enabled }}--only-spinnaker-managed true{{ end }} \
