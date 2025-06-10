@@ -104,6 +104,7 @@ data:
       {{ if $registry.passwordCommand -}} --password-command "{{ $registry.passwordCommand }}"{{ else -}} --password-file /opt/registry/passwords/{{ $registry.name }}{{- end }} \
       {{ if $registry.email -}} --email {{ $registry.email }}{{- end -}}{{- end }} \
       {{ if $registry.noValidate -}} --no-validate {{- end }} \
+      {{ if $registry.cacheIntervalSeconds -}} --cache-interval-seconds {{ $registry.cacheIntervalSeconds }}{{- end }} \
       {{ if $registry.cacheThreads -}} --cache-threads {{ $registry.cacheThreads }}{{- end }} \
       {{ if $registry.paginateSize -}} --paginate-size {{ $registry.paginateSize }} {{- end }} \
       {{ if $registry.timeoutMillis -}} --client-timeout-millis {{ $registry.timeoutMillis }}{{- end }} \
