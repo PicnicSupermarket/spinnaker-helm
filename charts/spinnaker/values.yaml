@@ -146,7 +146,7 @@ dockerRegistries:
 - name: dockerhub
   address: index.docker.io
   noValidate: false
-  cacheIntervalSeconds: 180
+  cacheIntervalSeconds: 30
   cacheThreads: 1
   paginateSize: 100
   timeoutMillis: 60000
