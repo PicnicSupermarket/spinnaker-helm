@@ -71,7 +71,7 @@ Redis base URL for Spinnaker
 {{- else if .Values.redis.external.password }}
 {{- printf "redis://:%s@%s:%s" .Values.redis.external.password .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- else if .Values.redis.auth.existingSecret }}
-{{- printf "redis://:$(cat /opt/redis/redis-password)@%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
+{{- printf "redis://%s:$(cat /opt/redis/redis-password)@%s:%s" .Values.redis.external.username .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- else }}
 {{- printf "redis://%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- end }}
