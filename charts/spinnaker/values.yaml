@@ -298,8 +298,6 @@ redis:
   enabled: true
   # External Redis option will be enabled if in-cluster redis is disabled
   external:
-    # No username in Redis corresponds to the 'default' user.
-    username: ''
     host: "<EXTERNAL-REDIS-HOST-NAME>"
     port: 6379
     # password: ""
