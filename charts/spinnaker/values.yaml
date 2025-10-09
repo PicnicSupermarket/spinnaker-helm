@@ -251,6 +251,11 @@ spinnakerFeatureFlags: []
 # nodeSelector to provide to each of the Spinnaker components
 nodeSelector: {}
 
+# Affinity for pod assignment
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+# Affinity to provide to each of the Spinnaker components
+affinity: {}
+
 # Node tolerations
 # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
