@@ -4,6 +4,7 @@ metadata:
   name: {{ template "spinnaker.fullname" . }}-halyard
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
+{{ .Values.halyard.additionalLabels | toYaml | indent 4 }}
 spec:
   serviceName: {{ template "spinnaker.fullname" . }}-halyard
   replicas: 1
@@ -20,6 +21,7 @@ spec:
       {{- end }}
       labels:
 {{ include "spinnaker.standard-labels" . | indent 8 }}
+{{ .Values.halyard.additionalLabels | toYaml | indent 8 }}
         component: halyard
     spec:
       {{- if .Values.serviceAccount.halyardName }}
