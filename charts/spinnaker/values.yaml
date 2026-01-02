@@ -22,6 +22,8 @@ halyard:
     # The content will be passed through `tpl`, so value interpolation is supported.
     create: false
     data: {}
+  # Add additional labels to the halyard statefulset and spawned pods.
+  additionalLabels: {}
   additionalSecrets:
     create: false
     data: {}
