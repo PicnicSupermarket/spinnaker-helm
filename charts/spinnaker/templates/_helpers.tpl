@@ -63,17 +63,17 @@ Redis base URL for Spinnaker
 */}}
 {{- define "spinnaker.redisBaseURL" -}}
 {{- if .Values.redis.external.password }}
-    {{- printf "rediss://:%s@%s:%s" .Values.redis.external.password .Values.redis.external.host (.Values.redis.external.port | toString) -}}
-{{- else if .Values.redis.auth.existingSecret }}
-    {{- printf "rediss://:$(cat /opt/redis/redis-password)@%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
-{{- else if }}
-    {{- printf "rediss://%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
+{{- printf "rediss://:%s@%s:%s" .Values.redis.external.password .Values.redis.external.host (.Values.redis.external.port | toString) -}}
+{{- else if .Values.redis.external.auth.existingSecret }}
+{{- printf "rediss://:$(cat /opt/redis/redis-password)@%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- else if .Values.redis.enabled }}
 {{- if .Values.redis.password }}
-    {{- printf "redis://:%s@%s-redis-master:6379" .Values.redis.password .Release.Name -}}
+{{- printf "redis://:%s@%s-redis-master:6379" .Values.redis.password .Release.Name -}}
 {{- else if .Values.redis.auth.existingSecret }}
-    {{- printf "redis://:$(cat /opt/redis/redis-password)@%s-redis-master:6379" .Release.Name -}}
+{{- printf "redis://:$(cat /opt/redis/redis-password)@%s-redis-master:6379" .Release.Name -}}
 {{- end }}
+{{- else }}
+{{- printf "rediss://%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- end }}
 {{- end }}
 
