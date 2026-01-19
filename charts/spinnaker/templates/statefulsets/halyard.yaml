@@ -63,7 +63,7 @@ spec:
         - name: halyard-bom
           mountPath: /tmp/halyard-bom
         {{- end }}
-        {{- if .Values.redis.auth.existingSecret }}
+        {{- if or .Values.redis.auth.existingSecret .Values.redis.external.auth.existingSecret }}
         - name: redis-secret
           mountPath: /opt/redis
         {{- end }}
@@ -104,7 +104,11 @@ spec:
           {{- else }}
           secretName: {{ template "spinnaker.fullname" . }}-registry
           {{- end }}
-      {{- if .Values.redis.auth.existingSecret }}
+      {{- if .Values.redis.external.auth.existingSecret }}
+      - name: redis-secret
+        secret:
+          secretName: {{ .Values.redis.external.auth.existingSecret }}
+      {{- else if .Values.redis.auth.existingSecret }}
       - name: redis-secret
         secret:
           secretName: {{ .Values.redis.auth.existingSecret }}
