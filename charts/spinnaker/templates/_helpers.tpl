@@ -79,7 +79,6 @@ Redis base URL for Spinnaker
 {{- printf "rediss://%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- end }}
 {{- end }}
-{{- end }}
 
 {{/*
 Create name of kubeconfig file to use when setting up kubernetes provider
