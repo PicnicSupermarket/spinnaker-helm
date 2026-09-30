@@ -114,6 +114,10 @@ halyard:
   # annotations:
   #   iam.amazonaws.com/role: <role_arn>
 
+  ## Uncomment if you want to add annotations on the halyard statefulset itself.
+  # statefulSetAnnotations:
+  #   example.com/some-annotation: <value>
+
   ## Uncomment the following resources definitions to control the cpu and memory
   # resources allocated for the halyard pod
   resources: {}

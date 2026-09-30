@@ -5,6 +5,10 @@ metadata:
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 {{ toYaml .Values.halyard.additionalLabels | indent 4 }}
+  {{- if .Values.halyard.statefulSetAnnotations }}
+  annotations:
+{{ toYaml .Values.halyard.statefulSetAnnotations | indent 4 }}
+  {{- end }}
 spec:
   serviceName: {{ template "spinnaker.fullname" . }}-halyard
   replicas: 1
